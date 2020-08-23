@@ -987,7 +987,7 @@ func is_convex(vertices):
 	return true
 
 # Decompress the data of the layer
-# Compression argument is a string, either "gzip" or "zlib"
+# Possible compression types are gzip, zlib (deflate) and zstd (zstandard).
 func decompress_layer_data(layer_data, compression, map_size):
 	# Default compression type I guess
 	var compression_type = File.COMPRESSION_DEFLATE
@@ -1169,7 +1169,7 @@ func validate_layer(layer):
 				print_error("Invalid data layer property.")
 				return ERR_INVALID_DATA
 			if "compression" in layer:
-				if layer.compression != "gzip" and layer.compression != "zlib":
+				if layer.compression != "gzip" and layer.compression != "zlib" and layer.compression != "zstd":
 					print_error("Invalid compression type.")
 					return ERR_INVALID_DATA
 		"imagelayer":
