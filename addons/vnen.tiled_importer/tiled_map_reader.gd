@@ -989,11 +989,20 @@ func is_convex(vertices):
 # Decompress the data of the layer
 # Compression argument is a string, either "gzip" or "zlib"
 func decompress_layer_data(layer_data, compression, map_size):
-	if compression != "gzip" and compression != "zlib":
-		print_error("Unrecognized compression format: %s" % [compression])
-		return ERR_INVALID_DATA
+	# Default compression type I guess
+	var compression_type = File.COMPRESSION_DEFLATE
 
-	var compression_type = File.COMPRESSION_DEFLATE if compression == "zlib" else File.COMPRESSION_GZIP
+	match compression:
+		"gzip":
+			compression_type = File.COMPRESSION_GZIP
+		"zlib":
+			compression_type = File.COMPRESSION_DEFLATE
+		"zstd":
+			compression_type = File.COMPRESSION_ZSTD
+		_:
+			print_error("Unrecognized compression format %s!" % [compression])
+			return ERR_INVALID_DATA
+
 	var expected_size = int(map_size.x) * int(map_size.y) * 4
 	var raw_data = Marshalls.base64_to_raw(layer_data).decompress(expected_size, compression_type)
 
